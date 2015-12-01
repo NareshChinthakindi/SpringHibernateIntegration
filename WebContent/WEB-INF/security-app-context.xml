@@ -1,0 +1,38 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+	
+
+ 
+	<http auto-config="true" >
+		<intercept-url pattern="/userLogin/*" access="ROLE_USER" />
+	<!-- 	<intercept-url pattern="/includes/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/> -->	
+		<form-login login-page="/login.html" default-target-url="/userLogin/welcome.html"
+			authentication-failure-url="/loginfailed.html" />
+		<!-- <logout logout-success-url="/userLogin/logout.html"  invalidate-session="true" logout-url="/userLogin/logout.html"/> -->
+		<logout logout-success-url="/logout.html" logout-url="/userLogin/j_spring_security_logout" />
+	</http>
+ 
+
+	<!--<http>
+		<intercept-url pattern="/welcome*" access="ROLE_USER" />
+		<http-basic />
+	</http>
+	--><authentication-manager>
+	  <authentication-provider><!--
+	  <user-service>
+		<user name="nareshc" password="javariders" authorities="ROLE_USER" />
+	    </user-service>
+	  -->
+	  <jdbc-user-service data-source-ref="dataSource" users-by-username-query="select login_id as username,password, enabled 
+		      from users where login_id=?" authorities-by-username-query="select u.login_id as username, ur.authority from users u, user_roles ur 
+		      where u.id = ur.user_id and u.login_id =?" />
+		       <password-encoder  hash="sha-256"/>
+	  </authentication-provider>
+	</authentication-manager>
+ 
+</beans:beans>
